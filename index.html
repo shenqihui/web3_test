@@ -6,8 +6,12 @@
   <title>test</title>
 </head>
 <body>
-  <script src="https://cdn.ethers.io/scripts/ethers-v3.min.js" charset="utf-8" type="text/javascript"></script>
+  <!-- <script src="https://cdn.ethers.io/scripts/ethers-v3.min.js" charset="utf-8" type="text/javascript"></script> -->
+  <script src="https://cdn.ethers.io/lib/ethers-5.1.umd.min.js" charset="utf-8" type="text/javascript"></script>
   <script>
+    // alert('ethers:' + JSON.stringify(window.ethers));
+    // alert('ethereum:' + JSON.stringify(window.ethereum));
+    // alert('web3:' + JSON.stringify(window.web3));
     function show(address) {
       console.log('address', address);
       document.getElementById('address').innerHTML = 'address:' + address;
@@ -26,7 +30,7 @@
       })
 
       window.ethereum.request({
-      method: 'eth_accounts',
+        method: 'eth_accounts',
       }).then((res) => {
         console.log('eth_accounts', res);
         show(res[0]);
@@ -43,12 +47,31 @@
       };
 
       let provider;
-      try {
-        provider = new ethers.providers.Web3Provider(window.ethereum)
+      if (window.ethereum) {
+        try {
+          provider = new ethers.providers.Web3Provider(window.ethereum)
+        }
+        catch(error) {
+          alert('Web3Provider :' + JSON.stringify(error));
+        }
       }
-      catch(error) {
-        alert('Web3Provider :' + JSON.stringify(error));
+      else if (window.web3){
+        try {
+          provider = new ethers.providers.Web3Provider(window.web3)
+        }
+        catch(error) {
+          alert('Web3Provider :' + JSON.stringify(error));
+        }
       }
+      else {
+        try {
+          provider = new ethers.providers.JsonRpcProvider();
+        }
+        catch(error) {
+          alert('JsonRpcProvider :' + JSON.stringify(error));
+        }
+      }
+
 
       let signer;
       try {
@@ -78,7 +101,7 @@
     <button onclick="connect()">链接钱包</button>
   </div>
 
-  <div id="connected" style="display: none">
+  <div id="connected" data-bak-style="display: none">
     <div id="address"></div>
     <button onclick="send()">send 0.0001ht</button>
   </div>
