@@ -9,7 +9,8 @@
   <script src="https://cdn.ethers.io/scripts/ethers-v3.min.js" charset="utf-8" type="text/javascript"></script>
   <script>
     function show(address) {
-      document.getElementById('address').html = address;
+      console.log('address', address);
+      document.getElementById('address').innerHTML = 'address:' + address;
       document.getElementById('connected').style.display = 'block';
       document.getElementById('not-connect').style.display = 'none';
     }
