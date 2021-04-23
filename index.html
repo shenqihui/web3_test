@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1,user-scalable=no">
+  <title>test</title>
+</head>
+<body>
+  <script src="https://cdn.ethers.io/scripts/ethers-v3.min.js" charset="utf-8" type="text/javascript"></script>
+  <script>
+    function show(address) {
+      document.getElementById('address').html = address;
+      document.getElementById('connected').style.display = 'block';
+      document.getElementById('not-connect').style.display = 'none';
+    }
+
+    function connect() {
+      window.ethereum.request({
+        method: 'eth_requestAccounts',
+      }).then((res) => {
+        console.log('eth_requestAccounts res', res);
+        show(res[0]);
+      }).catch((rej) => {
+        console.log('eth_requestAccounts rej', rej);
+      })
+
+      window.ethereum.request({
+      method: 'eth_accounts',
+      }).then((res) => {
+        console.log('eth_accounts', res);
+        show(res[0]);
+      }).catch((rej) => {
+        console.log('eth_accounts rej', rej);
+      })
+    }
+
+
+    function send() {
+      let transaction = {
+        to: '0x000000000000000000000000000000000000dead',
+        value: ethers.utils.parseEther(String('0.0001')),
+      };
+
+      let provider;
+      try {
+        provider = new ethers.providers.Web3Provider(window.ethereum)
+      }
+      catch(error) {
+        alert('Web3Provider :' + JSON.stringify(error));
+      }
+
+      let signer;
+      try {
+        signer = provider.getSigner()
+      }
+      catch(error) {
+        alert('getSigner :' + JSON.stringify(error));
+      }
+
+      try {
+        const tx = signer.sendTransaction(transaction).then((res) => {
+          alert('sendTransaction res:' + JSON.stringify(res));
+        }).catch((rej) => {
+          alert('sendTransaction rej:' + JSON.stringify(rej));
+          alert(rej);
+        })
+      }
+      catch (error) {
+        alert(JSON.stringify(error));
+      }
+
+    }
+
+  </script>
+
+  <div id="not-connect">
+    <button onclick="connect()">链接钱包</button>
+  </div>
+
+  <div id="connected" style="display: none">
+    <div id="address"></div>
+    <button onclick="send()">send 0.0001ht</button>
+  </div>
+</body>
+</html>
